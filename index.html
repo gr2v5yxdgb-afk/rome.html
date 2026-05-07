@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roma 2025">
+<meta name="theme-color" content="#17100A">
+<title>Roma 2025 — Notre Guide</title>
+<style>
+:root {
+  --dark: #17100A;
+  --red: #8B2500;
+  --gold: #C4922A;
+  --lgold: #F0C060;
+  --white: #FFFFFF;
+  --cream: #FBF7F2;
+  --muted: #8B6E56;
+  --green: #1D9E75;
+  --purple: #7F77DD;
+  --orange: #BA7517;
+  --bg: #F4EFE8;
+  --card: #FFFFFF;
+  --border: #E8DDD0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--dark); }
+
+/* ── SPLASH ── */
+#splash {
+  position: fixed; inset: 0; background: var(--dark); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .6s ease;
+}
+#splash h1 { font-size: 72px; font-weight: 900; color: var(--gold); letter-spacing: .08em; line-height: 1; }
+#splash p { color: var(--lgold); font-size: 14px; letter-spacing: .2em; margin-top: 8px; font-style: italic; }
+#splash .sub { color: rgba(255,255,255,.4); font-size: 11px; letter-spacing: .15em; margin-top: 32px; text-transform: uppercase; }
+#splash.hide { opacity: 0; pointer-events: none; }
+
+/* ── LAYOUT ── */
+#app { height: 100vh; display: flex; flex-direction: column; }
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--dark); color: var(--white);
+  padding: 12px 16px 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid var(--gold);
+}
+.topbar-left { display: flex; flex-direction: column; }
+.topbar-title { font-size: 18px; font-weight: 800; letter-spacing: .05em; color: var(--gold); line-height: 1; }
+.topbar-sub { font-size: 10px; color: rgba(255,255,255,.45); letter-spacing: .12em; margin-top: 2px; text-transform: uppercase; }
+.topbar-date { font-size: 11px; color: var(--lgold); font-weight: 600; text-align: right; line-height: 1.3; }
+
+/* ── DAY TABS ── */
+.day-tabs {
+  background: var(--dark); flex-shrink: 0;
+  display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 8px 12px 10px; gap: 6px;
+  border-bottom: 1px solid rgba(196,146,42,.2);
+}
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  border: 1.5px solid rgba(255,255,255,.15); color: rgba(255,255,255,.45);
+  background: transparent; cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+}
+.day-tab.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+.day-tab.booked { border-color: var(--green); color: var(--green); }
+.day-tab.booked.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 0 80px; }
+
+/* ── DAY HEADER ── */
+.day-header {
+  background: var(--dark); padding: 16px 16px 14px;
+  position: relative; overflow: hidden;
+}
+.day-header::before {
+  content: ''; position: absolute; right: -30px; top: -30px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: var(--red); opacity: .15;
+}
+.day-num-row { display: flex; align-items: flex-end; gap: 10px; }
+.day-num { font-size: 52px; font-weight: 900; color: var(--gold); line-height: 1; }
+.day-info { display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 4px; }
+.day-name { font-size: 16px; font-weight: 700; color: var(--white); }
+.day-date-txt { font-size: 10px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; margin-top: 1px; }
+.day-theme { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 8px; font-style: italic; line-height: 1.4; }
+.day-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.dbadge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 3px; letter-spacing: .06em; text-transform: uppercase; }
+.dbadge-red { background: #FCEBEB; color: #8B2500; }
+.dbadge-green { background: rgba(29,158,117,.25); color: #7de8c4; border: 1px solid rgba(29,158,117,.3); }
+.dbadge-gold { background: rgba(196,146,42,.2); color: var(--lgold); border: 1px solid rgba(196,146,42,.3); }
+.dbadge-orange { background: rgba(186,117,23,.2); color: #F0C060; border: 1px solid rgba(186,117,23,.3); }
+
+/* ── SECTION ── */
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .18em;
+  color: var(--muted); text-transform: uppercase;
+  padding: 12px 16px 6px; background: var(--bg);
+}
+
+/* ── EVENTS ── */
+.events { padding: 0 12px; display: flex; flex-direction: column; gap: 6px; }
+.event { display: flex; gap: 10px; }
+.event-line { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+.edot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; margin-top: 12px; border: 2px solid var(--bg); }
+.econn { width: 2px; flex: 1; min-height: 6px; margin: 2px 0; opacity: .3; }
+.event:last-child .econn { display: none; }
+.ecard {
+  flex: 1; background: var(--card); border-radius: 10px;
+  padding: 10px 12px 12px; border-left: 3px solid transparent;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 0;
+}
+.ecard.reserved { background: #F0FDF8; }
+.etime { font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+.ename { font-size: 14px; font-weight: 700; color: var(--dark); margin: 3px 0 4px; line-height: 1.25; }
+.edesc { font-size: 12px; color: #555; line-height: 1.55; }
+.epills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.pill { font-size: 10px; padding: 2px 7px; border-radius: 20px; border: .5px solid; font-weight: 600; }
+.p-gr { background: #E1F5EE; border-color: #5DCAA5; color: #085041; }
+.p-pu { background: #EEEDFE; border-color: #AFA9EC; color: #26215C; }
+.p-or { background: #FAEEDA; border-color: #EF9F27; color: #412402; }
+.p-gy { background: #f5f5f5; border-color: #ddd; color: #666; }
+.p-rd { background: #FCEBEB; border-color: #F09595; color: #501313; }
+.p-go { background: #FDF6E3; border-color: #C4922A; color: #7A5A10; }
+
+/* ── MAPS BUTTON ── */
+.maps-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--dark); color: var(--lgold);
+  border: none; border-radius: 6px; padding: 7px 11px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  margin-top: 8px; cursor: pointer; text-decoration: none;
+  width: fit-content;
+}
+.maps-btn svg { width: 13px; height: 13px; fill: var(--lgold); flex-shrink: 0; }
+
+/* ── INFO BOX ── */
+.infobox {
+  margin: 10px 12px 0; border-radius: 8px;
+  padding: 10px 12px; border-left: 3px solid;
+}
+.infobox-green { background: #E1F5EE; border-color: var(--green); }
+.infobox-orange { background: #FAEEDA; border-color: var(--orange); }
+.infobox-gold { background: #FDF6E3; border-color: var(--gold); }
+.infobox-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.infobox-green .infobox-label { color: #0F6E56; }
+.infobox-orange .infobox-label { color: #633806; }
+.infobox-gold .infobox-label { color: #7A5A10; }
+.infobox-text { font-size: 12px; line-height: 1.55; }
+.infobox-green .infobox-text { color: #085041; }
+.infobox-orange .infobox-text { color: #633806; }
+.infobox-gold .infobox-text { color: #5A4008; }
+
+/* ── BUDGET ── */
+.budget-card {
+  margin: 10px 12px 0; background: var(--card);
+  border-radius: 10px; padding: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+}
+.budget-title { font-size: 10px; font-weight: 700; letter-spacing: .15em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+.budget-row { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 4px; }
+.budget-row b { color: var(--dark); font-weight: 600; }
+.budget-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); color: var(--dark); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--dark); border-top: 2px solid rgba(196,146,42,.3);
+  display: flex; padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; cursor: pointer; padding: 4px 0;
+  color: rgba(255,255,255,.35); font-size: 9px; letter-spacing: .06em;
+  text-transform: uppercase; transition: color .2s;
+}
+.nav-btn.active { color: var(--gold); }
+.nav-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* ── EMERGENCY PAGE ── */
+.emergency { padding: 16px; }
+.emer-card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+.emer-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.emer-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.emer-row:last-child { border-bottom: none; }
+.emer-label { font-size: 12px; color: #555; }
+.emer-val { font-size: 13px; font-weight: 700; color: var(--dark); }
+.call-btn { display: block; background: #1D9E75; color: #fff; text-decoration: none; border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 700; text-align: center; margin-top: 6px; }
+.call-btn.red { background: #C62828; }
+
+/* ── INFOS PAGE ── */
+.infos { padding: 16px; }
+.info-section { margin-bottom: 16px; }
+.info-section h3 { font-size: 12px; font-weight: 700; letter-spacing: .15em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+.info-item { background: var(--card); border-radius: 10px; padding: 12px; margin-bottom: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-left: 3px solid var(--gold); }
+.info-item h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+.info-item p { font-size: 12px; color: #555; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <h1>ROMA</h1>
+  <p>Notre voyage · Mai 2025</p>
+  <div class="sub">Chargement du guide…</div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">ROMA 2025</div>
+      <div class="topbar-sub">8 — 14 mai · Prati</div>
+    </div>
+    <div class="topbar-date" id="topbar-date"></div>
+  </div>
+
+  <div class="day-tabs" id="day-tabs">
+    <button class="day-tab active" onclick="showDay(0)">Vue d'ensemble</button>
+    <button class="day-tab" onclick="showDay(1)">J1</button>
+    <button class="day-tab" onclick="showDay(2)">J2</button>
+    <button class="day-tab booked" onclick="showDay(3)">J3 ✅</button>
+    <button class="day-tab" onclick="showDay(4)">J4</button>
+    <button class="day-tab" onclick="showDay(5)">J5</button>
+    <button class="day-tab booked" onclick="showDay(6)">J6 ✅</button>
+    <button class="day-tab" onclick="showDay(7)">J7</button>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-prog" onclick="switchTab('prog')">
+      <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      Programme
+    </button>
+    <button class="nav-btn" id="nav-infos" onclick="switchTab('infos')">
+      <svg viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 100-16 8 8 0 000 16zm-1-5h2v2h-2v-2zm0-8h2v6h-2V7z"/></svg>
+      Infos utiles
+    </button>
+    <button class="nav-btn" id="nav-sos" onclick="switchTab('sos')">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      Urgences
+    </button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const days = [
+  // Day 0: Overview
+  { id: 0 },
+  // Day 1
+  {
+    id: 1, name: "Arrivée & Centre Historique", date: "Vendredi 8 mai",
+    theme: "Fiumicino · Sta Maria Maggiore · Monti · San Giovanni · Piazza Navona · Panthéon · Trevi · Trastevere",
+    badges: [{t:"Sacs à dos jusqu'à 14h", c:"dbadge-orange"}, {t:"Budget ~123€", c:"dbadge-gold"}],
+    sections: [
+      { label: "Matin — Avec les bagages", events: [
+        { time:"08h00", name:"Atterrissage Fiumicino", desc:"Leonardo Express vers Roma Termini. Quai 23-24 pour le retour.", type:"transport", pills:[{t:"~14€/pers",c:"p-gr"},{t:"35 min",c:"p-pu"}], lat:41.7999, lng:12.2462, place:"Aéroport de Fiumicino" },
+        { time:"09h20", name:"Basilique Santa Maria Maggiore", desc:"L'une des 4 grandes basiliques papales. Plafond Renaissance doré, mosaïques du Ve siècle. À 5 min de Termini.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"},{t:"Tenue correcte",c:"p-or"}], lat:41.8976, lng:12.4984, place:"Basilique Santa Maria Maggiore" },
+        { time:"09h55", name:"Quartier Monti — Flânerie", desc:"Ruelles pavées, façades ocres, cafés locaux. Premier espresso romain au comptoir — le rite du voyage !", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"~1h",c:"p-pu"},{t:"Via del Boschetto",c:"p-or"}], lat:41.8944, lng:12.4956, place:"Quartier Monti Rome" },
+        { time:"11h00", name:"San Giovanni in Laterano", desc:"La plus ancienne cathédrale d'Occident, fondée au IVe siècle. Aussi impressionnante que Saint-Pierre sans la foule. Gratuit.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"45 min",c:"p-pu"}], lat:41.8859, lng:12.5058, place:"San Giovanni in Laterano Rome" },
+        { time:"12h30", name:"Déjeuner — Quartier San Giovanni", desc:"Trattorias locales à prix raisonnables autour de la basilique.", type:"food", pills:[{t:"~15€/pers",c:"p-gr"}], lat:41.8859, lng:12.5058, place:"Quartier San Giovanni Rome" },
+        { time:"13h30", name:"Métro → Prati (Ottaviano)", desc:"Ligne A San Giovanni → Ottaviano. 5 min à pied jusqu'à l'Airbnb.", type:"transport", pills:[{t:"~1,50€/pers",c:"p-gr"},{t:"20 min",c:"p-pu"}], lat:41.908, lng:12.463, place:"Via Francesco Caracciolo 6 Rome" },
+        { time:"14h00", name:"✅ Check-in Airbnb !", desc:"Via Francesco Caracciolo 6, Prati. Enfin les mains libres !", type:"key", pills:[{t:"Check-in à 14h",c:"p-rd"}], lat:41.908, lng:12.463, place:"Via Francesco Caracciolo 6 Rome" },
+      ]},
+      { label: "Après-midi — Mains libres", events: [
+        { time:"14h30", name:"Piazza Navona", desc:"Fontaine des Quatre Fleuves du Bernin. Évitez les terrasses de la place.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8992, lng:12.4731, place:"Piazza Navona Rome" },
+        { time:"15h15", name:"Panthéon", desc:"Oculus de 9m, tombe de Raphaël. Monument le mieux conservé de l'Antiquité.", type:"visit", pills:[{t:"~5€/pers",c:"p-gr"},{t:"45 min",c:"p-pu"}], lat:41.8986, lng:12.4769, place:"Panthéon Rome" },
+        { time:"16h15", name:"Fontaine de Trevi — 1er passage", desc:"Lancez une pièce par-dessus l'épaule gauche ! Revenez vers 22h — éclairée et déserte.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"20 min",c:"p-pu"}], lat:41.9009, lng:12.4833, place:"Fontaine de Trevi Rome" },
+        { time:"17h00", name:"Trastevere — Basilique & Promenade", desc:"Basilique Santa Maria in Trastevere (gratuit). Ruelles pavées magnifiques en lumière de fin d'après-midi.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"1h30",c:"p-pu"}], lat:41.8895, lng:12.4698, place:"Trastevere Rome" },
+        { time:"20h30", name:"Dîner Trastevere", desc:"Da Enzo al 29 ou Tonnarello. Cacio e pepe ou gricia. Réserver.", type:"food", pills:[{t:"~22€/pers",c:"p-gr"},{t:"Réserver !",c:"p-rd"}], lat:41.8895, lng:12.4698, place:"Da Enzo al 29 Rome" },
+        { time:"22h00", name:"Fontaine de Trevi — Passage de nuit", desc:"En rentrant. Éclairée, quasi déserte — tout autre atmosphère qu'en journée.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"10 min",c:"p-pu"}], lat:41.9009, lng:12.4833, place:"Fontaine de Trevi Rome" },
+      ]},
+    ],
+    budget: [["Train aéroport","~28€"],["Panthéon","~10€"],["Déjeuner","~30€"],["Dîner","~45€"],["Métro","~5€"]],
+    total: "~118€",
+    tips: [{type:"green", label:"💡 Conseil", text:"San Giovanni in Laterano est souvent négligée par les touristes — c'est ce qui en fait une des visites les plus agréables du matin. Arrivez vers 11h, la lumière dans la nef est magnifique."},{type:"orange",label:"⚠ Bagages",text:"Les sacs à dos ne posent aucun problème dans les basiliques. Le check-in Airbnb n'est disponible qu'à partir de 14h — profitez-en pour explorer !"}]
+  },
+  // Day 2
+  {
+    id: 2, name: "Rome Éternelle", date: "Samedi 9 mai",
+    theme: "Largo Argentina · Campo de' Fiori · Isola Tiberina · Ghetto juif · Vittoriano · Sta Maria sopra Minerva · Spagna",
+    badges: [{t:"Journée libre",c:"dbadge-gold"},{t:"Budget ~110€",c:"dbadge-green"}],
+    sections: [
+      { label: "Matin", events: [
+        { time:"09h00", name:"Largo di Torre Argentina", desc:"Temples républicains du IVe-Ier s. av. J.-C. Lieu de l'assassinat de Jules César. Sanctuaire des chats. Gratuit depuis 2023.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.896, lng:12.4769, place:"Largo di Torre Argentina Rome" },
+        { time:"09h45", name:"Campo de' Fiori — Marché", desc:"Marché animé jusqu'à 14h. Fleurs, fromages, épices. La statue : Giordano Bruno, brûlé vif ici en 1600.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"},{t:"Ouvert jusqu'à 14h",c:"p-or"}], lat:41.8954, lng:12.4722, place:"Campo de Fiori Rome" },
+        { time:"10h30", name:"Isola Tiberina", desc:"La petite île du Tibre reliée à Rome par deux ponts antiques. Calme, méconnue, hors du temps.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8872, lng:12.4769, place:"Isola Tiberina Rome" },
+        { time:"11h15", name:"Ghetto juif — Promenade", desc:"La plus ancienne communauté juive d'Europe (2000 ans). Ruelles étroites, synagogue monumentale.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8933, lng:12.4762, place:"Ghetto juif Rome" },
+        { time:"12h00", name:"Déjeuner — Ghetto juif", desc:"Carciofo alla giudia, fleurs de courgette frites. Da Giggetto ou Sora Margherita.", type:"food", pills:[{t:"~18€/pers",c:"p-gr"},{t:"Réserver",c:"p-rd"}], lat:41.8933, lng:12.4762, place:"Da Giggetto Rome" },
+      ]},
+      { label: "Après-midi", events: [
+        { time:"14h00", name:"Altare della Patria — Vittoriano", desc:"Vue à 360° sur Rome depuis le sommet. Gratuit. L'une des plus belles vues de Rome.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8949, lng:12.483, place:"Altare della Patria Rome" },
+        { time:"15h00", name:"⭐ Santa Maria sopra Minerva", desc:"La seule église gothique de Rome ! Voûtes bleues étoilées, Michelangelo à l'intérieur. Le petit éléphant du Bernin devant — incontournable.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"},{t:"5 min du Panthéon",c:"p-or"}], lat:41.8974, lng:12.4786, place:"Santa Maria sopra Minerva Rome" },
+        { time:"16h00", name:"Piazza di Spagna", desc:"135 marches. En mai : azalées en fleurs. Vue sur les toits depuis la Trinità dei Monti.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"},{t:"Azalées en mai !",c:"p-or"}], lat:41.9057, lng:12.4822, place:"Piazza di Spagna Rome" },
+        { time:"16h45", name:"Via Condotti — Lèche-vitrine", desc:"La rue du luxe romain (Bulgari, Valentino). Via della Croce pour des boutiques abordables.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"45 min",c:"p-pu"}], lat:41.907, lng:12.484, place:"Via Condotti Rome" },
+        { time:"17h45", name:"Lungotevere — Coucher du soleil", desc:"Longez le Tibre vers Prati. Lumière dorée sur le fleuve. Retour naturel au logement.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"40 min à pied",c:"p-pu"}], lat:41.9, lng:12.475, place:"Lungotevere Rome" },
+        { time:"19h30", name:"Apéritivo à Prati", desc:"Spritz Aperol ou Campari dans votre quartier. Snacks souvent offerts.", type:"food", pills:[{t:"~7€/verre",c:"p-gr"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+        { time:"20h30", name:"Dîner Prati ou centre", desc:"Trattoria dans votre quartier ou retour vers le centre.", type:"food", pills:[{t:"~22€/pers",c:"p-gr"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+      ]},
+    ],
+    budget: [["Déjeuner Ghetto","~36€"],["Apéritivo","~14€"],["Dîner","~44€"]],
+    total: "~94€",
+    tips: [{type:"green",label:"💡 À ne pas manquer",text:"Santa Maria sopra Minerva est l'une des plus belles surprises de Rome — quasi personne n'y va car elle est dans l'ombre du Panthéon. Le petit éléphant du Bernin devant est incontournable."}]
+  },
+  // Day 3 - BOOKED
+  {
+    id: 3, name: "L'Antiquité Romaine", date: "Dimanche 10 mai",
+    theme: "Colisée · Forum Romain · Mont Palatin · Testaccio · Circus Maximus · Trou de serrure · Thermes de Caracalla",
+    badges: [{t:"✅ Colisée réservé 9h00",c:"dbadge-red"},{t:"Arrivez à 8h45 !",c:"dbadge-orange"},{t:"Budget ~169€",c:"dbadge-gold"}],
+    booked: true,
+    sections: [
+      { label: "Matin — Sites archéologiques", events: [
+        { time:"08h45", name:"Départ → Colisée", desc:"Métro A → Termini, puis ligne B → Colosseo. Ou 25 min à pied. Arrivez à 8h45 pour les tourniquets à 9h pile.", type:"transport", pills:[{t:"~1,50€/pers",c:"p-gr"},{t:"20-25 min",c:"p-pu"}], lat:41.8902, lng:12.4922, place:"Colisée Rome" },
+        { time:"09h00", name:"✅ COLISÉE — Billet réservé", desc:"Inauguré en 80 ap. J.-C., 80 000 spectateurs. Montez au 3e niveau pour la meilleure vue sur l'arène et le Forum. Audioguide en français inclus.", type:"booked", pills:[{t:"Réservé + audioguide",c:"p-rd"},{t:"2h",c:"p-pu"},{t:"3e niveau = meilleure vue",c:"p-or"}], lat:41.8902, lng:12.4922, place:"Colisée Rome" },
+        { time:"11h00", name:"Forum Romain", desc:"La Via Sacra, l'Arc de Titus, le Temple de Saturne. L'Arc de Titus montre en relief la Ménorah du Temple de Jérusalem.", type:"visit", pills:[{t:"Inclus",c:"p-gy"},{t:"1h30",c:"p-pu"},{t:"Chapeau + eau !",c:"p-or"}], lat:41.8921, lng:12.4864, place:"Forum Romain Rome" },
+        { time:"12h30", name:"Mont Palatin", desc:"Jardins Farnèse (un peu d'ombre). Vue plongeante sur le Forum — meilleure vue que depuis le bas.", type:"visit", pills:[{t:"Inclus",c:"p-gy"},{t:"45 min",c:"p-pu"}], lat:41.8881, lng:12.4877, place:"Mont Palatin Rome" },
+      ]},
+      { label: "Après-midi — Testaccio & Aventin", events: [
+        { time:"14h00", name:"Déjeuner Testaccio", desc:"Da Remo pour la pizza romaine croustillante. Le marché est fermé le dimanche.", type:"food", pills:[{t:"~17€/pers",c:"p-gr"},{t:"Marché fermé dimanche",c:"p-or"}], lat:41.8793, lng:12.4771, place:"Da Remo Rome Testaccio" },
+        { time:"15h30", name:"Circus Maximus", desc:"600m de long, 250 000 spectateurs. L'hippodrome de l'Antiquité. Vue sur le Palatin.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"20 min",c:"p-pu"}], lat:41.8859, lng:12.4858, place:"Circus Maximus Rome" },
+        { time:"16h00", name:"⭐ Trou de serrure — Chevaliers de Malte", desc:"Piazza dei Cavalieri di Malta, Aventin. Regardez dans le trou de serrure de la grande porte verte : le dôme de Saint-Pierre apparaît parfaitement centré. Secret absolu !", type:"special", pills:[{t:"Gratuit",c:"p-gy"},{t:"15 min",c:"p-pu"}], lat:41.8821, lng:12.4784, place:"Piazza dei Cavalieri di Malta Rome" },
+        { time:"16h35", name:"Thermes de Caracalla", desc:"1 600 baigneurs en 216 ap. J.-C. Mosaïques magnifiques, peu de touristes. Ouverts le dimanche ✅ — ferment à 18h !", type:"visit", pills:[{t:"~8€/pers",c:"p-gr"},{t:"1h15",c:"p-pu"},{t:"Ferment à 18h !",c:"p-rd"}], lat:41.879, lng:12.4924, place:"Thermes de Caracalla Rome" },
+      ]},
+      { label: "Soirée", events: [
+        { time:"20h00", name:"Dîner — Flavio al Velavevodetto", desc:"Creusé dans la Montagna dei Cocci (53 millions d'amphores antiques). Cuisine romaine authentique. Réserver absolument !", type:"food", pills:[{t:"~28€/pers",c:"p-gr"},{t:"Réserver !",c:"p-rd"}], lat:41.8793, lng:12.4771, place:"Flavio al Velavevodetto Rome" },
+      ]},
+    ],
+    budget: [["Colisée + audioguide","~48€"],["Thermes","~16€"],["Déjeuner","~34€"],["Dîner","~56€"],["Transport","~5€"]],
+    total: "~159€",
+    tips: [{type:"orange",label:"⚠ Important",text:"Arrivez au Colisée à 8h45, pas 9h00. En haute saison les contrôles prennent du temps — vous risqueriez de rater votre créneau réservé."},{type:"green",label:"💡 Astuce",text:"Le billet Colisée + Forum + Palatin est valable 2 jours consécutifs. Vous pouvez revenir au Forum lundi si besoin."}]
+  },
+  // Day 4
+  {
+    id: 4, name: "Excursion à Tivoli", date: "Lundi 11 mai",
+    theme: "Bus Cotral · Villa Adriana (UNESCO) · Déjeuner Tivoli · Villa d'Este (UNESCO) · Retour Rome",
+    badges: [{t:"2 sites UNESCO",c:"dbadge-green"},{t:"Hors de Rome",c:"dbadge-gold"},{t:"Budget ~106€",c:"dbadge-orange"}],
+    sections: [
+      { label: "Trajet — Bus Cotral", events: [
+        { time:"07h45", name:"Métro → Ponte Mammolo", desc:"Métro A Ottaviano → Termini, puis ligne B → Ponte Mammolo (terminus). Achetez les billets Cotral aux Tabacchi de la station.", type:"transport", pills:[{t:"~1,50€/pers métro",c:"p-gr"},{t:"25 min",c:"p-pu"}], lat:41.9205, lng:12.565, place:"Station Ponte Mammolo Rome" },
+        { time:"08h20", name:"Bus Cotral → Bivio Adriana", desc:"Direction Tivoli via Prenestina. Dites 'Villa Adriana' au chauffeur et asseyez-vous à l'avant. ~50 min de trajet.", type:"transport", pills:[{t:"~2-3€/pers",c:"p-gr"},{t:"~50 min",c:"p-pu"},{t:"Dites 'Villa Adriana' !",c:"p-rd"}], lat:41.9461, lng:12.7729, place:"Villa Adriana Tivoli" },
+      ]},
+      { label: "Matin — Villa Adriana (UNESCO)", events: [
+        { time:"09h30", name:"Villa Adriana", desc:"Le complexe impérial d'Hadrien sur 120 hectares. Le Canope, le Teatro Marittimo, les Grandes Thermes. ⚠ Chapeau et grande bouteille d'eau essentiels — peu d'ombre !", type:"visit", pills:[{t:"~12€/pers",c:"p-gr"},{t:"2h minimum",c:"p-pu"},{t:"Chapeau + eau !",c:"p-rd"}], lat:41.9461, lng:12.7729, place:"Villa Adriana Tivoli" },
+      ]},
+      { label: "Midi — Centre de Tivoli", events: [
+        { time:"12h00", name:"Bus CAT 4 → Centre de Tivoli", desc:"Depuis l'arrêt Bivio Adriana, bus local vers le centre de Tivoli. ~15 min.", type:"transport", pills:[{t:"~1-2€/pers",c:"p-gr"},{t:"15 min",c:"p-pu"}], lat:41.9636, lng:12.798, place:"Centre historique Tivoli" },
+        { time:"12h30", name:"Déjeuner à Tivoli", desc:"Ristorante Sibilla : terrasse avec vue plongeante sur le Temple de Vesta et la gorge. Cuisine laziale à prix locaux.", type:"food", pills:[{t:"~13€/pers",c:"p-gr"},{t:"Vue Temple de Vesta !",c:"p-or"}], lat:41.9636, lng:12.798, place:"Ristorante Sibilla Tivoli" },
+      ]},
+      { label: "Après-midi — Villa d'Este (UNESCO)", events: [
+        { time:"14h30", name:"Villa d'Este", desc:"500 fontaines par gravité — aucune pompe. L'Allée des Cent Fontaines, la Fontaine de l'Orgue. En mai : jardins en pleine floraison.", type:"visit", pills:[{t:"~10€/pers",c:"p-gr"},{t:"1h30",c:"p-pu"},{t:"Jardins en fleurs !",c:"p-go"}], lat:41.9633, lng:12.7958, place:"Villa d'Este Tivoli" },
+        { time:"16h30", name:"Promenade centre de Tivoli", desc:"Ruelles médiévales, belvédère sur le Temple de Vesta.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.9636, lng:12.798, place:"Centre Tivoli" },
+        { time:"17h30", name:"Train retour → Rome", desc:"Gare de Tivoli (~10 min à pied de la Villa d'Este). Train direct Roma Termini. Toutes les 30-60 min.", type:"transport", pills:[{t:"~3,50-5€/pers",c:"p-gr"},{t:"~1h",c:"p-pu"}], lat:41.9617, lng:12.7981, place:"Gare de Tivoli" },
+        { time:"20h00", name:"Dîner à Prati", desc:"Retour au quartier. Découverte des restaurantes locaux de Prati.", type:"food", pills:[{t:"~20€/pers",c:"p-gr"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+      ]},
+    ],
+    budget: [["Métro + Cotral aller","~11€"],["Villa Adriana","~24€"],["Bus local + train retour","~12€"],["Villa d'Este","~20€"],["Déjeuner","~26€"],["Dîner","~40€"]],
+    total: "~133€",
+    tips: [{type:"green",label:"💡 Ordre important",text:"Villa Adriana le matin (fraîcheur, lumière idéale) et Villa d'Este l'après-midi (les fontaines sont plus belles avec la lumière descendante). Ne faites pas l'inverse."},{type:"orange",label:"⚠ Bus Cotral",text:"Dites 'Villa Adriana' au chauffeur en montant et asseyez-vous à l'avant. L'arrêt Bivio Adriana n'est pas toujours annoncé."}]
+  },
+  // Day 5
+  {
+    id: 5, name: "Villa Borghèse & Nord de Rome", date: "Mardi 12 mai",
+    theme: "Parc Villa Borghèse · Giardino del Lago · Monte Pincio · Piazza del Popolo · Via del Corso · Prati",
+    badges: [{t:"Journée de respiration",c:"dbadge-green"},{t:"Quasi gratuite",c:"dbadge-gold"},{t:"Budget ~100€",c:"dbadge-orange"}],
+    sections: [
+      { label: "Matin — Parc Villa Borghèse", events: [
+        { time:"09h30", name:"Parc Villa Borghèse", desc:"80 hectares gratuits. Le plus beau parc de Rome. Pins parasols centenaires, fontaines, allées ombragées. Calme le mardi matin.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"1h de flânerie",c:"p-pu"}], lat:41.9142, lng:12.4921, place:"Parc Villa Borghèse Rome" },
+        { time:"10h30", name:"Giardino del Lago — Barques", desc:"Lac artificiel avec location de barques. Vue sur le Temple de Diana depuis l'eau. Moment suspendu et romantique.", type:"free", pills:[{t:"~5€/pers",c:"p-gr"},{t:"30-45 min",c:"p-pu"}], lat:41.9118, lng:12.4854, place:"Giardino del Lago Villa Borghèse" },
+        { time:"11h30", name:"Déjeuner — Pique-nique ou Casina Valadier", desc:"Pique-nique sur l'herbe (achetez charcuterie et fromages à Prati avant de partir) ou Casina Valadier avec terrasse panoramique.", type:"food", pills:[{t:"Pique-nique ~12€/pers",c:"p-gr"},{t:"Restaurant ~30€/pers",c:"p-gr"}], lat:41.9121, lng:12.4827, place:"Casina Valadier Rome" },
+      ]},
+      { label: "Après-midi — Descente vers Piazza Venezia", events: [
+        { time:"13h00", name:"Monte Pincio — Vue panoramique", desc:"L'une des plus belles vues sur Rome. Toits ocres, dômes, Saint-Pierre à l'horizon. Coucher de soleil légendaire.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.9111, lng:12.4779, place:"Monte Pincio Rome" },
+        { time:"14h00", name:"Piazza del Popolo", desc:"Obélisque de Ramsès II (XIIIe s. av. J.-C.), deux églises jumelles. Ancienne porte nord de Rome. Deux Caravages dans Santa Maria del Popolo (gratuit).", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"},{t:"2 Caravages dans l'église",c:"p-or"}], lat:41.911, lng:12.4762, place:"Piazza del Popolo Rome" },
+        { time:"14h45", name:"Via del Corso — Descente à pied", desc:"1,5 km de Piazza del Popolo jusqu'à Piazza Venezia. Boutiques italiennes, librairies, cafés. ~40 min de marche agréable.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"40 min",c:"p-pu"}], lat:41.903, lng:12.479, place:"Via del Corso Rome" },
+        { time:"16h00", name:"Piazza Venezia", desc:"Terminus de la Via del Corso. Vue sur le Vittoriano. Point de jonction entre nord et sud de Rome.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"15 min",c:"p-pu"}], lat:41.8949, lng:12.483, place:"Piazza Venezia Rome" },
+        { time:"16h30", name:"Retour Prati — Lungotevere", desc:"Longez le Tibre vers le nord depuis Piazza Venezia. 30 min de marche agréable, lumière dorée sur l'eau.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min à pied",c:"p-pu"}], lat:41.9, lng:12.47, place:"Lungotevere Rome" },
+      ]},
+      { label: "Soirée", events: [
+        { time:"18h30", name:"Apéritivo à Prati", desc:"Spritz bien mérité après la longue journée de marche. Snacks souvent offerts.", type:"food", pills:[{t:"~7€/verre",c:"p-gr"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+        { time:"20h30", name:"Dîner Prati ou Pigneto", desc:"Prati pour rester proche, ou Pigneto pour une ambiance locale et branchée.", type:"food", pills:[{t:"~20€/pers",c:"p-gr"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+      ]},
+    ],
+    budget: [["Barques","~10€"],["Déjeuner (pique-nique)","~24€"],["Apéritivo","~14€"],["Dîner","~40€"],["Transport","~5€"]],
+    total: "~93€",
+    tips: [{type:"green",label:"💡 Journée de détente",text:"C'est la journée la plus légère du séjour. Profitez-en pour souffler. La barque sur le lac et le pique-nique sous les pins sont souvent les souvenirs préférés !"}]
+  },
+  // Day 6 - BOOKED
+  {
+    id: 6, name: "Castel Sant'Angelo & Vatican", date: "Mercredi 13 mai",
+    theme: "5 min du logement · Castel Sant'Angelo · Vatican 13h30 · Basilique Saint-Pierre · Pont illuminé",
+    badges: [{t:"✅ Vatican réservé 13h30",c:"dbadge-red"},{t:"Journée à domicile",c:"dbadge-gold"},{t:"Budget ~187€",c:"dbadge-green"}],
+    booked: true,
+    sections: [
+      { label: "Matin — Castel Sant'Angelo", events: [
+        { time:"09h00", name:"Castel Sant'Angelo", desc:"À 5 min à pied ! Mausolée d'Hadrien (135 ap. J.-C.) → forteresse papale. 6 niveaux : oubliettes, armureries, appartements papaux, terrasse panoramique sur le Tibre.", type:"visit", pills:[{t:"~12€/pers",c:"p-gr"},{t:"1h30",c:"p-pu"},{t:"5 min du logement !",c:"p-or"}], lat:41.9031, lng:12.4663, place:"Castel Sant'Angelo Rome" },
+        { time:"10h30", name:"Ponte Sant'Angelo — Matin", desc:"Pont aux anges du Bernin (1668). Lumière matinale idéale. Revenez ce soir pour le voir illuminé !", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"20 min",c:"p-pu"},{t:"Revenez de nuit !",c:"p-or"}], lat:41.9017, lng:12.4665, place:"Ponte Sant'Angelo Rome" },
+        { time:"11h00", name:"Promenade Via Cola di Rienzo", desc:"L'artère principale de Prati. Café tranquille, librairie, pâtisserie avant l'après-midi.", type:"free", pills:[{t:"Gratuit",c:"p-gy"}], lat:41.908, lng:12.463, place:"Via Cola di Rienzo Rome" },
+        { time:"12h30", name:"Déjeuner léger — Prati", desc:"Repas léger impératif — vous marcherez beaucoup au Vatican. Évitez les restaurants autour de Saint-Pierre (prix touristiques).", type:"food", pills:[{t:"~13€/pers",c:"p-gr"},{t:"Rester à Prati",c:"p-or"}], lat:41.908, lng:12.463, place:"Quartier Prati Rome" },
+      ]},
+      { label: "Après-midi — Vatican ✅ RÉSERVÉ", events: [
+        { time:"13h15", name:"Trajet vers l'entrée des Musées", desc:"5-10 min à pied. Entrée côté Viale Vaticano (pas la file générale de la place). Billet sur téléphone ou imprimé.", type:"transport", pills:[{t:"Gratuit à pied",c:"p-gy"},{t:"Entrée Viale Vaticano",c:"p-rd"}], lat:41.9065, lng:12.4536, place:"Musées du Vatican" },
+        { time:"13h30", name:"✅ Musées du Vatican — Guide français", desc:"Galerie des Cartes → Chambres de Raphaël (l'École d'Athènes) → Chapelle Sixtine (plafond de Michel-Ange). ⚠ Photos interdites dans la Sixtine. Le guide explique tout AVANT d'entrer.", type:"booked", pills:[{t:"Réservé 80€",c:"p-rd"},{t:"2h30",c:"p-pu"},{t:"Tenue correcte !",c:"p-or"},{t:"Pas de photos Sixtine",c:"p-rd"}], lat:41.9065, lng:12.4536, place:"Musées du Vatican" },
+        { time:"16h30", name:"Basilique Saint-Pierre", desc:"Sortie directe depuis la Sixtine par la porte latérale. Pietà de Michel-Ange à droite en entrant (sculptée à 24 ans). Baldaquin du Bernin (29m). Dôme optionnel.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"1h30",c:"p-pu"},{t:"Dôme ~8€/pers (optionnel)",c:"p-gr"}], lat:41.9022, lng:12.4539, place:"Basilique Saint-Pierre Vatican" },
+      ]},
+      { label: "Soirée — Avant-dernier soir", events: [
+        { time:"19h00", name:"Ponte Sant'Angelo — Illuminé", desc:"10 min de Saint-Pierre à pied. Le pont illuminé de nuit est l'un des plus beaux spectacles de Rome.", type:"free", pills:[{t:"Gratuit",c:"p-gy"},{t:"20 min",c:"p-pu"}], lat:41.9017, lng:12.4665, place:"Ponte Sant'Angelo Rome" },
+        { time:"20h00", name:"Dîner Prati — Avant-dernier soir", desc:"Via Candia ou Via Lucrezio Caro. Belle occasion d'une bouteille de vin pour célébrer cette journée.", type:"food", pills:[{t:"~25€/pers",c:"p-gr"},{t:"Via Candia ou Lucrezio Caro",c:"p-or"}], lat:41.908, lng:12.463, place:"Via Candia Rome Prati" },
+      ]},
+    ],
+    budget: [["Castel Sant'Angelo","~24€"],["Vatican (réservé)","80€"],["Dôme Saint-Pierre (opt.)","~16€"],["Déjeuner","~26€"],["Dîner","~50€"]],
+    total: "~196€ (avec dôme) / ~180€ (sans)",
+    tips: [
+      {type:"orange",label:"⚠ Règles Vatican",text:"Épaules et genoux couverts obligatoires. Photos interdites dans la Sixtine. Arrivez à 13h15. Entrée côté Viale Vaticano."},
+      {type:"green",label:"💡 La Pietà",text:"Sculptée par Michel-Ange à 24 ans, c'est la seule œuvre qu'il ait signée — son nom est gravé sur l'écharpe de la Vierge. Cherchez-le !"}
+    ]
+  },
+  // Day 7
+  {
+    id: 7, name: "Dernière Journée & Envol", date: "Jeudi 14 mai",
+    theme: "Consigne Termini · Capitole · Monti · Domus Aurea · Sta Maria Maggiore · Leonardo Express 18h30",
+    badges: [{t:"✈ Vol 20h35",c:"dbadge-red"},{t:"Départ hôtel 17h30",c:"dbadge-orange"},{t:"Budget ~147€",c:"dbadge-gold"}],
+    sections: [
+      { label: "Matin", events: [
+        { time:"08h30", name:"Check-out + Consigne Termini", desc:"Déposez vos bagages à la consigne automatique de Roma Termini. Journée entièrement libre jusqu'à 17h30.", type:"transport", pills:[{t:"~6€/bagage",c:"p-gr"},{t:"Métro A → Termini",c:"p-pu"}], lat:41.9009, lng:12.5016, place:"Consigne Roma Termini" },
+        { time:"09h30", name:"Musées du Capitole", desc:"Plus anciens musées publics du monde (1471). Louve Capitoline, Marc Aurèle en bronze. Vue plongeante sur le Forum depuis la terrasse.", type:"visit", pills:[{t:"~15€/pers",c:"p-gr"},{t:"2h",c:"p-pu"}], lat:41.8929, lng:12.4826, place:"Musées du Capitole Rome" },
+        { time:"11h30", name:"Piazza del Campidoglio & Vittoriano", desc:"Place dessinée par Michel-Ange. Montée gratuite au Vittoriano pour la dernière vue à 360° sur Rome.", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8949, lng:12.483, place:"Piazza del Campidoglio Rome" },
+        { time:"13h00", name:"Dernier déjeuner — Quartier Monti", desc:"Ultime carbonara, cacio e pepe ou amatriciana. Quartier bohème, vrais Romains, bons prix.", type:"food", pills:[{t:"~20€/pers",c:"p-gr"}], lat:41.8954, lng:12.4942, place:"Quartier Monti Rome" },
+      ]},
+      { label: "Après-midi", events: [
+        { time:"14h30", name:"Domus Aurea — Palais de Néron", desc:"Palais souterrain de Néron. Visite guidée + expérience VR. ✅ Ouvert le vendredi uniquement. Réserver sur coopculture.it !", type:"visit", pills:[{t:"~16€/pers",c:"p-gr"},{t:"1h15",c:"p-pu"},{t:"Réserver coopculture.it",c:"p-rd"}], lat:41.8911, lng:12.4952, place:"Domus Aurea Rome" },
+        { time:"16h30", name:"Derniers souvenirs — Monti", desc:"Boutiques artisanales, produits alimentaires italiens de qualité. Évitez les souvenirs kitsch !", type:"free", pills:[{t:"Budget libre",c:"p-gy"},{t:"30 min",c:"p-pu"}], lat:41.8954, lng:12.4942, place:"Quartier Monti Rome" },
+      ]},
+      { label: "⚠ Départ — Ne pas être en retard !", events: [
+        { time:"17h30", name:"⚠ DÉPART IMPÉRATIF", desc:"Prenez le métro B depuis Colosseo → Termini. Récupérez vos bagages à la consigne.", type:"urgent", pills:[{t:"Métro ~1,50€/pers",c:"p-gr"},{t:"15 min",c:"p-pu"},{t:"NE PAS ÊTRE EN RETARD",c:"p-rd"}], lat:41.9009, lng:12.5016, place:"Roma Termini" },
+        { time:"17h45", name:"Basilique Santa Maria Maggiore", desc:"5 min à pied de Termini. Le cercle est bouclé — vue à l'arrivée J1 et au départ J7 !", type:"visit", pills:[{t:"Gratuit",c:"p-gy"},{t:"20 min max",c:"p-rd"}], lat:41.8976, lng:12.4984, place:"Basilique Santa Maria Maggiore Rome" },
+        { time:"18h10", name:"Dernier espresso romain", desc:"Debout au comptoir à Termini. Le rite de clôture parfait.", type:"food", pills:[{t:"~1€/pers",c:"p-gr"},{t:"5 min",c:"p-pu"}], lat:41.9009, lng:12.5016, place:"Roma Termini" },
+        { time:"18h30", name:"✈ Leonardo Express → Fiumicino", desc:"Quai 23-24 de Roma Termini. Toutes les 15 min. 35 min de trajet. Arrivée aéroport 19h05.", type:"transport", pills:[{t:"~14€/pers",c:"p-gr"},{t:"Quai 23-24",c:"p-rd"},{t:"35 min",c:"p-pu"}], lat:41.9009, lng:12.5016, place:"Roma Termini" },
+        { time:"20h35", name:"Décollage 🛫", desc:"Arrivederci Roma ! Vous garderez ces 7 jours dans vos cœurs pour longtemps.", type:"special", pills:[], lat:41.7999, lng:12.2462, place:"Aéroport de Fiumicino" },
+      ]},
+    ],
+    budget: [["Consigne","~12€"],["Capitole","~30€"],["Domus Aurea","~32€"],["Dernier déjeuner","~40€"],["Train aéroport","~28€"]],
+    total: "~142€",
+    tips: [
+      {type:"orange",label:"⚠ Horaire de départ",text:"Partez de la consigne Termini à 17h30 AU PLUS TARD. Le Leonardo Express de 18h30 est votre train. Le suivant est à 18h45 — encore possible mais sans marge."},
+      {type:"green",label:"💡 Beau clin d'œil",text:"Santa Maria Maggiore est à 5 min de Termini — vue le premier matin à l'arrivée, et revue au départ. Le voyage se boucle parfaitement."}
+    ]
+  }
+];
+
+const TYPE_COLORS = {
+  transport: { dot:"#BA7517", conn:"#BA7517", border:"#BA7517" },
+  visit:     { dot:"#7F77DD", conn:"#7F77DD", border:"#7F77DD" },
+  food:      { dot:"#1D9E75", conn:"#1D9E75", border:"#1D9E75" },
+  free:      { dot:"#888",    conn:"#888",    border:"#888" },
+  key:       { dot:"#C4922A", conn:"#C4922A", border:"#C4922A" },
+  booked:    { dot:"#1D9E75", conn:"#1D9E75", border:"#1D9E75" },
+  special:   { dot:"#C4922A", conn:"#C4922A", border:"#C4922A" },
+  urgent:    { dot:"#C62828", conn:"#C62828", border:"#C62828" },
+};
+
+let currentDay = 1;
+let currentTab = 'prog';
+
+function buildOverview() {
+  return `
+    <div style="padding:16px">
+      <div style="background:#17100A;border-radius:12px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:#8B2500;opacity:.15"></div>
+        <div style="font-size:11px;letter-spacing:.2em;color:#8B6E56;text-transform:uppercase;font-weight:700">VOYAGE À ROME</div>
+        <div style="font-size:28px;font-weight:900;color:#C4922A;margin:6px 0 2px;letter-spacing:.05em">8 — 14 MAI 2025</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);font-style:italic">7 jours · 2 personnes · Quartier Prati</div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(196,146,42,.2)">
+          <div style="font-size:12px;color:#8B6E56;margin-bottom:4px">Logement</div>
+          <div style="font-size:13px;color:#fff;font-weight:600">Via Francesco Caracciolo 6, Prati</div>
+          <div style="font-size:11px;color:#8B6E56">À 5 min du Vatican et du Castel Sant'Angelo</div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;letter-spacing:.18em;color:#8B6E56;text-transform:uppercase;margin-bottom:8px">RÉSERVATIONS CONFIRMÉES</div>
+      <div style="background:#F0FDF8;border-radius:10px;padding:14px;border-left:3px solid #1D9E75;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
+        <div style="font-size:11px;font-weight:700;color:#1D9E75;letter-spacing:.08em">✅ COLISÉE</div>
+        <div style="font-size:14px;font-weight:700;color:#17100A;margin:3px 0">Dimanche 10 mai à 9h00</div>
+        <div style="font-size:12px;color:#555">Billet + audioguide numérique · Arrivez à 8h45 !</div>
+      </div>
+      <div style="background:#F0FDF8;border-radius:10px;padding:14px;border-left:3px solid #1D9E75;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
+        <div style="font-size:11px;font-weight:700;color:#1D9E75;letter-spacing:.08em">✅ MUSÉES DU VATICAN</div>
+        <div style="font-size:14px;font-weight:700;color:#17100A;margin:3px 0">Mercredi 13 mai à 13h30</div>
+        <div style="font-size:12px;color:#555">Visite guidée en français · 80€ pour 2 · Tenue correcte</div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;letter-spacing:.18em;color:#8B6E56;text-transform:uppercase;margin-bottom:8px">PROGRAMME SEMAINE</div>
+      ${[1,2,3,4,5,6,7].map(d => {
+        const day = days[d];
+        const booked = day.booked;
+        return `<div onclick="showDay(${d})" style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:3px solid ${booked?'#1D9E75':'#C4922A'}">
+          <div style="font-size:28px;font-weight:900;color:${booked?'#1D9E75':'#C4922A'};line-height:1;width:40px;flex-shrink:0">J${d}</div>
+          <div style="flex:1">
+            <div style="font-size:10px;color:#8B6E56;letter-spacing:.1em;text-transform:uppercase">${day.date}</div>
+            <div style="font-size:13px;font-weight:700;color:#17100A;margin-top:1px">${day.name}</div>
+            ${booked?'<div style="font-size:10px;color:#1D9E75;font-weight:700;margin-top:2px">✅ RÉSERVÉ</div>':''}
+          </div>
+          <div style="color:#C4922A;font-size:18px">›</div>
+        </div>`;
+      }).join('')}
+
+      <div style="margin-top:16px;background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.15em;color:#8B6E56;text-transform:uppercase;margin-bottom:10px">BUDGET TOTAL ESTIMÉ</div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:#17100A">
+          <span>Total 7 jours (2 personnes)</span>
+          <span style="color:#C4922A">~920€</span>
+        </div>
+        <div style="font-size:11px;color:#8B6E56;margin-top:4px">Hors hébergement · Toutes visites et repas inclus</div>
+      </div>
+    </div>`;
+}
+
+function buildDay(d) {
+  const day = days[d];
+  let html = '';
+
+  // Header
+  html += `<div class="day-header">
+    <div class="day-num-row">
+      <div class="day-num">J${d}</div>
+      <div class="day-info">
+        <div class="day-name">${day.name}</div>
+        <div class="day-date-txt">${day.date}</div>
+      </div>
+    </div>
+    <div class="day-theme">${day.theme}</div>
+    <div class="day-badges">${day.badges.map(b=>`<span class="dbadge ${b.c}">${b.t}</span>`).join('')}</div>
+  </div>`;
+
+  // Sections
+  day.sections.forEach(sec => {
+    html += `<div class="section-label">${sec.label}</div>`;
+    html += `<div class="events">`;
+    sec.events.forEach((ev, i) => {
+      const col = TYPE_COLORS[ev.type] || TYPE_COLORS.visit;
+      const isLast = i === sec.events.length - 1;
+      html += `<div class="event">
+        <div class="event-line">
+          <div class="edot" style="background:${col.dot};box-shadow:0 0 0 2px ${col.dot}"></div>
+          ${!isLast ? `<div class="econn" style="background:${col.conn}"></div>` : ''}
+        </div>
+        <div class="ecard${ev.type==='booked'?' reserved':''}${ev.type==='urgent'?' style="border-left-color:#C62828;background:#FFF5F5"':''}" style="border-left-color:${col.border}">
+          <div class="etime" style="color:${col.dot}">${ev.time}</div>
+          <div class="ename">${ev.name}</div>
+          <div class="edesc">${ev.desc}</div>
+          ${ev.pills.length ? `<div class="epills">${ev.pills.map(p=>`<span class="pill ${p.c}">${p.t}</span>`).join('')}</div>` : ''}
+          ${ev.lat ? `<a class="maps-btn" href="https://maps.google.com/maps?q=${ev.lat},${ev.lng}" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            Ouvrir dans Maps
+          </a>` : ''}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  // Tips
+  if (day.tips) {
+    day.tips.forEach(tip => {
+      const cls = tip.type === 'orange' ? 'infobox-orange' : tip.type === 'gold' ? 'infobox-gold' : 'infobox-green';
+      html += `<div class="infobox ${cls}">
+        <div class="infobox-label">${tip.label}</div>
+        <div class="infobox-text">${tip.text}</div>
+      </div>`;
+    });
+  }
+
+  // Budget
+  html += `<div class="budget-card" style="margin-top:10px">
+    <div class="budget-title">BUDGET ESTIMÉ (2 PERSONNES)</div>
+    ${day.budget.map(([l,v])=>`<div class="budget-row"><span>${l}</span><b>${v}</b></div>`).join('')}
+    <div class="budget-total"><span>Total estimé</span><span>${day.total}</span></div>
+  </div>`;
+
+  html += '<div style="height:16px"></div>';
+  return html;
+}
+
+function buildInfos() {
+  return `<div class="infos">
+    <div class="info-section">
+      <h3>Transport essentiel</h3>
+      <div class="info-item">
+        <h4>✈ Leonardo Express — Aéroport ↔ Rome</h4>
+        <p>Fiumicino → Roma Termini en 35 min. ~14€/pers. Quai 23-24 à Termini. Toutes les 15 min. Premier train ~6h38, dernier ~23h38.</p>
+      </div>
+      <div class="info-item">
+        <h4>🚇 Métro — Rome</h4>
+        <p>Lignes A et B. ~1,50€/pers le ticket (valable 100 min). Achetez des carnets de 10 tickets (~14€) pour économiser. Votre station : Ottaviano (ligne A).</p>
+      </div>
+      <div class="info-item">
+        <h4>🚌 Bus Cotral — Tivoli (J4)</h4>
+        <p>Depuis Ponte Mammolo (ligne B). ~2-3€/pers. Pas de réservation — achat aux Tabacchi de la station. Dites "Villa Adriana" au chauffeur.</p>
+      </div>
+    </div>
+    <div class="info-section">
+      <h3>Règles importantes</h3>
+      <div class="info-item">
+        <h4>👗 Tenue dans les churches & Vatican</h4>
+        <p>Épaules et genoux couverts obligatoires. Un foulard ou un gilet léger suffit. Règle appliquée strictement au Vatican.</p>
+      </div>
+      <div class="info-item">
+        <h4>📷 Photos interdites</h4>
+        <p>Chapelle Sixtine : photos absolument interdites. Flash interdit dans tous les musées.</p>
+      </div>
+      <div class="info-item">
+        <h4>💶 Argent & paiement</h4>
+        <p>La plupart des restaurants et musées acceptent la carte. Gardez ~20-30€ en espèces pour les marchés, bus et petites dépenses. Les Tabacchi vendent billets de transport.</p>
+      </div>
+    </div>
+    <div class="info-section">
+      <h3>Conseils pratiques</h3>
+      <div class="info-item">
+        <h4>☀️ Météo de mai à Rome</h4>
+        <p>Températures : 18-25°C. Quelques averses possibles en début de séjour. Chaussures de marche confortables indispensables — vous marcherez 10-15 km/jour.</p>
+      </div>
+      <div class="info-item">
+        <h4>💧 Fontaines publiques</h4>
+        <p>Les "nasoni" — robinets en fonte dans les rues — offrent de l'eau fraîche et potable gratuitement partout. Emportez une gourde vide.</p>
+      </div>
+      <div class="info-item">
+        <h4>🍽️ Bien manger à Rome</h4>
+        <p>Évitez les menus plastifiés avec photos et les restos autour des grands monuments. Cherchez les endroits où les Romains déjeunent. Le déjeuner est moins cher que le dîner.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildSOS() {
+  return `<div class="emergency">
+    <div class="emer-card">
+      <div class="emer-title">🚨 Numéros d'urgence</div>
+      <div class="emer-row"><span class="emer-label">Urgences générales</span><b class="emer-val">112</b></div>
+      <div class="emer-row"><span class="emer-label">Police (Carabinieri)</span><b class="emer-val">112</b></div>
+      <div class="emer-row"><span class="emer-label">SAMU / Ambulance</span><b class="emer-val">118</b></div>
+      <div class="emer-row"><span class="emer-label">Pompiers</span><b class="emer-val">115</b></div>
+      <a href="tel:112" class="call-btn red">📞 Appeler le 112 — Urgences</a>
+    </div>
+    <div class="emer-card">
+      <div class="emer-title">🏥 Hôpitaux proches</div>
+      <div class="emer-row"><span class="emer-label">Ospedale Santo Spirito</span><b class="emer-val">Prati — 10 min</b></div>
+      <div class="emer-row"><span class="emer-label">Policlinico Gemelli</span><b class="emer-val">~20 min en taxi</b></div>
+      <a href="https://maps.google.com/maps?q=Ospedale+Santo+Spirito+Rome" target="_blank" class="call-btn">📍 Hôpital Santo Spirito — Maps</a>
+    </div>
+    <div class="emer-card">
+      <div class="emer-title">📞 Contacts utiles</div>
+      <div class="emer-row"><span class="emer-label">Ambassade de France</span><b class="emer-val">+39 06 68 60 11</b></div>
+      <div class="emer-row"><span class="emer-label">Perte carte bancaire</span><b class="emer-val">+33 892 705 705</b></div>
+      <div class="emer-row"><span class="emer-label">Perte passeport</span><b class="emer-val">Ambassade de France</b></div>
+      <a href="tel:+390668601" class="call-btn">📞 Ambassade de France</a>
+    </div>
+    <div class="emer-card">
+      <div class="emer-title">🏠 Logement</div>
+      <div class="emer-row"><span class="emer-label">Adresse</span><b class="emer-val">Via Caracciolo 6</b></div>
+      <div class="emer-row"><span class="emer-label">Quartier</span><b class="emer-val">Prati, 00192 Rome</b></div>
+      <a href="https://maps.google.com/maps?q=Via+Francesco+Caracciolo+6+Rome" target="_blank" class="call-btn">📍 Voir le logement sur Maps</a>
+    </div>
+  </div>`;
+}
+
+function showDay(d) {
+  currentDay = d;
+  // Update tabs
+  document.querySelectorAll('.day-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === d);
+  });
+  // Scroll tab into view
+  const activeTab = document.querySelectorAll('.day-tab')[d];
+  if (activeTab) activeTab.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  // Render content
+  const content = document.getElementById('content');
+  if (d === 0) {
+    content.innerHTML = buildOverview();
+  } else {
+    content.innerHTML = buildDay(d);
+  }
+  content.scrollTop = 0;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  ['prog','infos','sos'].forEach(t => {
+    document.getElementById(`nav-${t}`).classList.toggle('active', t === tab);
+  });
+  const content = document.getElementById('content');
+  const tabs = document.getElementById('day-tabs');
+  if (tab === 'prog') {
+    tabs.style.display = 'flex';
+    showDay(currentDay);
+  } else if (tab === 'infos') {
+    tabs.style.display = 'none';
+    content.innerHTML = buildInfos();
+    content.scrollTop = 0;
+  } else if (tab === 'sos') {
+    tabs.style.display = 'none';
+    content.innerHTML = buildSOS();
+    content.scrollTop = 0;
+  }
+}
+
+// Update topbar date
+function updateDate() {
+  const now = new Date();
+  const days_fr = ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.'];
+  const months_fr = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  document.getElementById('topbar-date').innerHTML = `${days_fr[now.getDay()]} ${now.getDate()} ${months_fr[now.getMonth()]}<br>${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+updateDate();
+setInterval(updateDate, 60000);
+
+// Init
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    document.getElementById('app').style.display = 'flex';
+    // Auto-select today's day if during trip
+    const today = new Date();
+    const tripStart = new Date('2025-05-08');
+    const dayNum = Math.floor((today - tripStart) / 86400000) + 1;
+    const autoDay = (dayNum >= 1 && dayNum <= 7) ? dayNum : 1;
+    showDay(autoDay);
+    setTimeout(() => document.getElementById('splash').remove(), 700);
+  }, 1200);
+});
+</script>
+</body>
+</html>
