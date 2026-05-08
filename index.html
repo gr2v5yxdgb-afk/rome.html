@@ -564,7 +564,7 @@ function buildDay(d) {
           <div class="ename">${ev.name}</div>
           <div class="edesc">${ev.desc}</div>
           ${ev.pills.length ? `<div class="epills">${ev.pills.map(p=>`<span class="pill ${p.c}">${p.t}</span>`).join('')}</div>` : ''}
-          ${ev.lat ? `<a class="maps-btn" href="https://maps.google.com/maps?q=${ev.lat},${ev.lng}" target="_blank">
+          ${ev.place ? `<a class="maps-btn" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.place)}" target="_blank">
             <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
             Ouvrir dans Maps
           </a>` : ''}
@@ -660,7 +660,7 @@ function buildSOS() {
       <div class="emer-title">🏥 Hôpitaux proches</div>
       <div class="emer-row"><span class="emer-label">Ospedale Santo Spirito</span><b class="emer-val">Prati — 10 min</b></div>
       <div class="emer-row"><span class="emer-label">Policlinico Gemelli</span><b class="emer-val">~20 min en taxi</b></div>
-      <a href="https://maps.google.com/maps?q=Ospedale+Santo+Spirito+Rome" target="_blank" class="call-btn">📍 Hôpital Santo Spirito — Maps</a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Ospedale+Santo+Spirito+Rome" target="_blank" class="call-btn">📍 Hôpital Santo Spirito — Maps</a>
     </div>
     <div class="emer-card">
       <div class="emer-title">📞 Contacts utiles</div>
@@ -673,7 +673,7 @@ function buildSOS() {
       <div class="emer-title">🏠 Logement</div>
       <div class="emer-row"><span class="emer-label">Adresse</span><b class="emer-val">Via Caracciolo 6</b></div>
       <div class="emer-row"><span class="emer-label">Quartier</span><b class="emer-val">Prati, 00192 Rome</b></div>
-      <a href="https://maps.google.com/maps?q=Via+Francesco+Caracciolo+6+Rome" target="_blank" class="call-btn">📍 Voir le logement sur Maps</a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Via+Francesco+Caracciolo+6+Rome+Prati" target="_blank" class="call-btn">📍 Voir le logement sur Maps</a>
     </div>
   </div>`;
 }
@@ -754,7 +754,7 @@ function buildMap() {
         ${p.time ? `<div style="font-size:10px;color:${p.color};font-weight:700;letter-spacing:.08em;margin-bottom:1px">${p.time}${label?' · '+label:''}</div>` : ''}
         <div style="font-size:13px;font-weight:600;color:#17100A;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
       </div>
-      <a href="https://maps.google.com/maps?q=${p.lat},${p.lng}&z=16" target="_blank"
+      <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' Rome')}" target="_blank"
         onclick="event.stopPropagation()"
         style="font-size:18px;color:#C4922A;text-decoration:none;flex-shrink:0">↗</a>
     </div>`;
@@ -777,7 +777,7 @@ function buildMap() {
         ${points.length} lieu${points.length>1?'x':''} — Appuyez pour centrer · ↗ pour Maps
       </div>
       ${listHTML}
-      <a href="https://maps.google.com/maps?q=41.908,12.463&z=17" target="_blank"
+      <a href="https://www.google.com/maps/search/?api=1&query=Via+Francesco+Caracciolo+6+Rome+Prati" target="_blank"
         style="display:flex;align-items:center;justify-content:center;gap:6px;background:#17100A;color:#F0C060;border-radius:8px;padding:11px;font-size:13px;font-weight:700;text-decoration:none;margin-top:6px">
         🏠 Logement Via Caracciolo 6
       </a>
@@ -829,7 +829,7 @@ function initLeafMap() {
           ${p.time ? `<div style="font-size:10px;color:${p.color};font-weight:700;margin-bottom:2px">${p.time}</div>` : ''}
           <b style="font-size:13px;color:#17100A;line-height:1.3">${p.name}</b>
           <div style="font-size:11px;color:#666;margin-top:3px;line-height:1.4">${p.desc}</div>
-          <a href="https://maps.google.com/maps?q=${p.lat},${p.lng}&z=16" target="_blank"
+          <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + (p.name.includes('Tivoli') ? '' : ' Rome'))}" target="_blank"
             style="display:inline-block;margin-top:6px;background:${p.color};color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;text-decoration:none">
             Ouvrir Maps ↗
           </a>
